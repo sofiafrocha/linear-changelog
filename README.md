@@ -1,17 +1,15 @@
 # linear-changelog
 
-To install dependencies:
+## Setup
 
-```bash
-bun install
-```
+1. Install [Bun](https://bun.sh/)
+2. Run `bun install`
+3. Rename `.env.example` to `.env` and add your [Linear API key](https://linear.app/cobaia/settings/account/security)
 
-To run:
-
-Rename `.env.example` to `.env` and add your [Linear API key](https://linear.app/cobaia/settings/account/security).
+## Get last week's completed issues
 
 ```bash
 bun run index.ts
 ```
 
-This project was created using `bun init` in bun v1.0.2. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+This will generate a `changelog-DATE.txt` file with the list.
