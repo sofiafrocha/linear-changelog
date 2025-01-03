@@ -22,25 +22,51 @@ const status = "completed";
 
 async function getCompletedIssues() {
   try {
-    const issues = await linearClient.issues({
-      filter: {
-        completedAt: { gte: since },
-        state: { type: { eq: status } },
-        ...(args.project ? { project: { name: { eq: args.project } } } : {}),
-      },
-    });
-
-    console.log(
-      "🚚 Number of issues completed this week: ",
-      issues.nodes.length
+    const graphQLClient = linearClient.client;
+    const response = await graphQLClient.rawRequest(
+      `
+      query issues {
+        issues(
+          filter: {
+            state: { type: { eq: "completed" }}
+          }
+        ) {
+          nodes {
+            id
+            title
+            labels {
+              nodes {
+                name
+              }
+            }
+          }
+        }
+      }`,
+      {
+        // since: new Date(since).toISOString(),
+        // status,
+        // project: args.project || null,
+      }
     );
 
-    const list = issues.nodes.map((node) => node.title);
+    console.log("DEBUG", response.data.issues.nodes);
+
+    const issues = response.data.issues.nodes;
+
+    console.log("🚚 Number of issues completed this week: ", issues.length);
+
+    const list = issues.map((issue) => ({
+      title: issue.title,
+      labels: issue.labels.nodes?.map((l) => l.name),
+    }));
 
     console.log("🚚 Issues:");
-    list.forEach((i) => console.log(i));
+    list.forEach((i) => console.log(i.title));
 
-    const bulletPoints = list.map((i) => `- ${i}`);
+    const bulletPoints = list.map((i) => {
+      const labels = i.labels.length ? `[${i.labels.join(", ")}] ` : "";
+      return `- ${labels}${i.title}`;
+    });
 
     await Bun.write(outputFile, bulletPoints.join("\n"));
 
