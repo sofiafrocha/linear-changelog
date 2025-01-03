@@ -45,8 +45,7 @@ async function getCompletedIssues() {
         }
       }`
     );
-    const issues = response.data.issues.nodes;
-    const list = issues.map((issue) => ({
+    const list = response.data.issues.nodes.map((issue) => ({
       title: issue.title,
       labels: issue.labels.nodes?.map((l) => l.name),
     }));
