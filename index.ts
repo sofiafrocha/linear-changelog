@@ -40,7 +40,9 @@ async function getCompletedIssues() {
     console.log("🚚 Issues:");
     list.forEach((i) => console.log(i));
 
-    await Bun.write(outputFile, list.join("\n"));
+    const bulletPoints = list.map((i) => `- ${i}`);
+
+    await Bun.write(outputFile, bulletPoints.join("\n"));
 
     console.log("🚚 Saved list to", outputFile);
 
