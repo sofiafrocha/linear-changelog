@@ -26,6 +26,7 @@ async function getCompletedIssues() {
       filter: {
         completedAt: { gte: since },
         state: { type: { eq: status } },
+        ...(args.project ? { project: { name: { eq: args.project } } } : {}),
       },
     });
 
