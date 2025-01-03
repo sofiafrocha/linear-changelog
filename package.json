@@ -1,0 +1,14 @@
+{
+  "name": "linear-changelog",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@linear/sdk": "^37.0.0"
+  }
+}
