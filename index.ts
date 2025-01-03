@@ -10,7 +10,7 @@ const args = yargs(Bun.argv);
 const startOfWeek = new Date();
 startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Set to Sunday
 startOfWeek.setHours(0, 0, 0, 0);
-const since = args.since || startOfWeek.toISOString();
+const since = args.since || startOfWeek.toISOString().substring(0, 10);
 
 const today = new Date();
 const date = today.toISOString().substring(0, 10);
@@ -28,7 +28,9 @@ async function getCompletedIssues() {
       query issues {
         issues(
           filter: {
-            state: { type: { eq: "completed" }}
+            state: { type: { eq: "${status}" }}
+            ${args.project ? `project: { name: { eq: "${args.project}" }}` : ""}
+            completedAt: { gte: "${since}" }
           }
         ) {
           nodes {
@@ -41,24 +43,15 @@ async function getCompletedIssues() {
             }
           }
         }
-      }`,
-      {
-        // since: new Date(since).toISOString(),
-        // status,
-        // project: args.project || null,
-      }
+      }`
     );
-
-    console.log("DEBUG", response.data.issues.nodes);
-
     const issues = response.data.issues.nodes;
-
-    console.log("🚚 Number of issues completed this week: ", issues.length);
-
     const list = issues.map((issue) => ({
       title: issue.title,
       labels: issue.labels.nodes?.map((l) => l.name),
     }));
+
+    console.log("🚚 Number of issues completed this week: ", list.length);
 
     console.log("🚚 Issues:");
     list.forEach((i) => console.log(i.title));
