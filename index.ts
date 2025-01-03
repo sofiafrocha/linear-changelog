@@ -1,24 +1,31 @@
-console.log("Hello via Bun!");
-
+const yargs = require("yargs-parser");
 import { LinearClient } from "@linear/sdk";
 
 const linearClient = new LinearClient({
   apiKey: process.env.LINEAR_API_KEY,
 });
 
+const args = yargs(Bun.argv);
+
 const startOfWeek = new Date();
 startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Set to Sunday
 startOfWeek.setHours(0, 0, 0, 0);
+const since = args.since || startOfWeek.toISOString();
+
 const today = new Date();
 const date = today.toISOString().substring(0, 10);
-const outputFile = `changelog-${date}.txt`;
+const outputFile = args.output || `changelog-${date}.txt`;
+
+//  One of "triage", "backlog", "unstarted", "started", "completed", "canceled"
+// https://studio.apollographql.com/public/Linear-API/variant/current/schema/visualization?focused=FIELD-WorkflowState-type&showDetails=true
+const status = "completed";
 
 async function getCompletedIssues() {
   try {
     const issues = await linearClient.issues({
       filter: {
-        completedAt: { gte: startOfWeek.toISOString() },
-        state: { type: { eq: "completed" } },
+        completedAt: { gte: since },
+        state: { type: { eq: status } },
       },
     });
 

@@ -13,3 +13,8 @@ bun run index.ts
 ```
 
 This will generate a `changelog-DATE.txt` file with the list.
+
+## Available options
+
+- `--since`: to specify the date that issues will be filtered from `bun run index.ts --since 2025-01-01`
+- `--output`: to specify the name of the output file `bun run index.ts --output cool.txt`
