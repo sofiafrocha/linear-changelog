@@ -53,11 +53,14 @@ async function getCompletedIssues() {
     console.log("🚚 Number of issues completed this week: ", list.length);
 
     console.log("🚚 Issues:");
-    list.forEach((i) => console.log(i.title));
 
     const bulletPoints = list.map((i) => {
       const labels = i.labels.length ? `[${i.labels.join(", ")}] ` : "";
-      return `- ${labels}${i.title}`;
+      const result = `- ${labels}${i.title}`;
+
+      console.log(result);
+
+      return result;
     });
 
     await Bun.write(outputFile, bulletPoints.join("\n"));
